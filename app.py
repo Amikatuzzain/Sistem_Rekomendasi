@@ -16,3 +16,12 @@ usage = st.sidebar.selectbox("Primary Usage", ["Gaming", "Work", "Student", "All
 
 # Tombol untuk merekomendasikan
 if st.sidebar.button("Recommend"):
+    # Blok kode harus terindeks di sini
+    try:
+        # Ganti fungsi ini dengan metode prediksi/model Anda
+        recommendations = model.recommend(brand=brand, budget=budget, usage=usage)
+        st.subheader("Recommended Laptops")
+        for rec in recommendations:
+            st.write(f"- {rec}")
+    except AttributeError:
+        st.error("Model doesn't support the required method.")
