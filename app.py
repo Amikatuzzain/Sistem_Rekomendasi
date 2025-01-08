@@ -1,7 +1,9 @@
 import pickle
-import streamlit as st
+import sklearn  # Contoh: tambahkan pustaka scikit-learn jika diperlukan
+import pandas as pd
+import numpy as np
 
-# Coba memuat file model
+# Memuat model dari file pkl
 try:
     with open("laptop_recommender.pkl", "rb") as file:
         model = pickle.load(file)
@@ -9,7 +11,6 @@ except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
 
-# Judul aplikasi
 st.title("Laptop Recommender System")
 
 # Input dari pengguna
@@ -21,13 +22,23 @@ usage = st.sidebar.selectbox("Primary Usage", ["Gaming", "Work", "Student", "All
 # Tombol untuk merekomendasikan
 if st.sidebar.button("Recommend"):
     try:
-        # Pastikan fungsi recommend tersedia dalam model
+        # Validasi apakah model memiliki metode recommend
         if hasattr(model, "recommend"):
             recommendations = model.recommend(brand=brand, budget=budget, usage=usage)
-            st.subheader("Recommended Laptops")
-            for rec in recommendations:
-                st.write(f"- {rec}")
+        elif hasattr(model, "predict"):
+            input_data = pd.DataFrame({
+                "brand": [brand],
+                "budget": [budget],
+                "usage": [usage]
+            })
+            recommendations = model.predict(input_data)
         else:
-            st.error("The loaded model does not have a 'recommend' method.")
+            st.error("Model does not support recommendation or prediction.")
+            st.stop()
+
+        # Menampilkan hasil rekomendasi
+        st.subheader("Recommended Laptops")
+        for rec in recommendations:
+            st.write(f"- {rec}")
     except Exception as e:
         st.error(f"Error during recommendation: {e}")
