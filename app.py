@@ -1,9 +1,13 @@
 import pickle
 import streamlit as st
 
-# Memuat model dari file pkl
-with open("laptop_recommender.pkl", "rb") as file:
-    model = pickle.load(file)
+# Coba memuat file model
+try:
+    with open("laptop_recommender.pkl", "rb") as file:
+        model = pickle.load(file)
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
 
 # Judul aplikasi
 st.title("Laptop Recommender System")
@@ -16,12 +20,14 @@ usage = st.sidebar.selectbox("Primary Usage", ["Gaming", "Work", "Student", "All
 
 # Tombol untuk merekomendasikan
 if st.sidebar.button("Recommend"):
-    # Blok kode harus terindeks di sini
     try:
-        # Ganti fungsi ini dengan metode prediksi/model Anda
-        recommendations = model.recommend(brand=brand, budget=budget, usage=usage)
-        st.subheader("Recommended Laptops")
-        for rec in recommendations:
-            st.write(f"- {rec}")
-    except AttributeError:
-        st.error("Model doesn't support the required method.")
+        # Pastikan fungsi recommend tersedia dalam model
+        if hasattr(model, "recommend"):
+            recommendations = model.recommend(brand=brand, budget=budget, usage=usage)
+            st.subheader("Recommended Laptops")
+            for rec in recommendations:
+                st.write(f"- {rec}")
+        else:
+            st.error("The loaded model does not have a 'recommend' method.")
+    except Exception as e:
+        st.error(f"Error during recommendation: {e}")
