@@ -1,7 +1,6 @@
 import pickle
-import sklearn  # Contoh: tambahkan pustaka scikit-learn jika diperlukan
+import streamlit as st
 import pandas as pd
-import numpy as np
 
 # Memuat model dari file pkl
 try:
